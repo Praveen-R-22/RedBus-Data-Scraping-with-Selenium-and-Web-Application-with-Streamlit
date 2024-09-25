@@ -96,11 +96,13 @@ if web == "States and Routes":
     States = slt.selectbox("Lists of States", ["Andhra Pradesh", "Kerala", "Telugana", "Kadamba", "Rajastan", 
                                           "South Bengal", "Himachal", "Assam", "Uttar Pradesh", "West Bengal"])
     
-    col1,col2=slt.columns(2)
+    col1,col2,col3=slt.columns(3)
     with col1:
         select_type = slt.radio("Choose bus type", ("sleeper", "semi-sleeper", "seater", "others"))
     with col2:
         select_fare = slt.radio("Choose bus fare range", ("50-1000", "1000-2000", "2000 and above"))
+    with col3:
+        select_star_rating = slt.slider("Select star rating", min_value=0.0, max_value=5.0, value=(0.0,5.0), step=0.5)
     TIME=slt.time_input("select the time")
 
 
@@ -108,7 +110,7 @@ if web == "States and Routes":
     if States=="Andhra Pradesh":
         AP=slt.selectbox("list of routes",lists_AP)
 
-        def type_and_fare_A(bus_type, fare_range):
+        def type_and_fare_A(bus_type, fare_range, ratings):
             conn = mysql.connector.connect(host="localhost", user="root", password="", database="RED_BUS_DETAILS")
             my_cursor = conn.cursor()
             # Define fare range based on selection
@@ -129,11 +131,15 @@ if web == "States and Routes":
             else:
                 bus_type_condition = "Bus_type NOT LIKE '%Sleeper%' AND Bus_type NOT LIKE '%Semi-Sleeper%'"
 
+            #Star rating condition
+            min_rating, max_rating = ratings 
             query = f'''
                 SELECT * FROM bus_details 
                 WHERE Price BETWEEN {fare_min} AND {fare_max}
                 AND Route_name = "{AP}"
-                AND {bus_type_condition} AND Start_time>='{TIME}'
+                AND {bus_type_condition} 
+                AND Ratings BETWEEN {min_rating} AND {max_rating}
+                AND Start_time>='{TIME}'
                 ORDER BY Price and Start_time DESC
             '''
             my_cursor.execute(query)
@@ -146,14 +152,14 @@ if web == "States and Routes":
             ])
             return df
 
-        df_result = type_and_fare_A(select_type, select_fare)
+        df_result = type_and_fare_A(select_type, select_fare, select_star_rating)
         slt.dataframe(df_result)
           
     #Kerala bus fare filtering
     if States == "Kerala":
         KL = slt.selectbox("List of routes",lists_KL)
 
-        def type_and_fare(bus_type, fare_range):
+        def type_and_fare(bus_type, fare_range, ratings):
             conn = mysql.connector.connect(host="localhost", user="root", password="", database="RED_BUS_DETAILS")
             my_cursor = conn.cursor()
             # Define fare range based on selection
@@ -174,11 +180,16 @@ if web == "States and Routes":
             else:
                 bus_type_condition = "Bus_type NOT LIKE '%Sleeper%' AND Bus_type NOT LIKE '%Semi-Sleeper%'"
 
+            #Star rating condition
+            min_rating, max_rating = ratings
+
             query = f'''
                 SELECT * FROM bus_details 
                 WHERE Price BETWEEN {fare_min} AND {fare_max}
                 AND Route_name = "{KL}"
-                AND {bus_type_condition} AND Start_time>='{TIME}'
+                AND {bus_type_condition} 
+                AND Ratings BETWEEN {min_rating} AND {max_rating}
+                AND Start_time>='{TIME}'
                 ORDER BY Price and Start_time DESC
             '''
             my_cursor.execute(query)
@@ -191,7 +202,7 @@ if web == "States and Routes":
             ])
             return df
 
-        df_result = type_and_fare(select_type, select_fare)
+        df_result = type_and_fare(select_type, select_fare, select_star_rating)
         slt.dataframe(df_result)
 
 
@@ -199,7 +210,7 @@ if web == "States and Routes":
     if States=="Telugana":
         TL=slt.selectbox("list of routes",lists_TL)
 
-        def type_and_fare_T(bus_type, fare_range):
+        def type_and_fare_T(bus_type, fare_range, ratings):
             conn = mysql.connector.connect(host="localhost", user="root", password="", database="RED_BUS_DETAILS")
             my_cursor = conn.cursor()
             # Define fare range based on selection
@@ -220,11 +231,16 @@ if web == "States and Routes":
             else:
                 bus_type_condition = "Bus_type NOT LIKE '%Sleeper%' AND Bus_type NOT LIKE '%Semi-Sleeper%'"
 
+            #Star rating condition
+            min_rating, max_rating = ratings
+
             query = f'''
                 SELECT * FROM bus_details 
                 WHERE Price BETWEEN {fare_min} AND {fare_max}
                 AND Route_name = "{TL}"
-                AND {bus_type_condition} AND Start_time>='{TIME}'
+                AND {bus_type_condition} 
+                AND Ratings BETWEEN {min_rating} AND {max_rating}
+                AND Start_time>='{TIME}'
                 ORDER BY Price and Start_time DESC
             '''
             my_cursor.execute(query)
@@ -237,14 +253,14 @@ if web == "States and Routes":
             ])
             return df
 
-        df_result = type_and_fare_T(select_type, select_fare)
+        df_result = type_and_fare_T(select_type, select_fare, select_star_rating)
         slt.dataframe(df_result)
 
     #Kadamba bus fare filtering
     if States=="Kadamba":
         KD=slt.selectbox("list of routes",lists_KD)
 
-        def type_and_fare_KD(bus_type, fare_range):
+        def type_and_fare_KD(bus_type, fare_range, ratings):
             conn = mysql.connector.connect(host="localhost", user="root", password="", database="RED_BUS_DETAILS")
             my_cursor = conn.cursor()
             # Define fare range based on selection
@@ -265,11 +281,16 @@ if web == "States and Routes":
             else:
                 bus_type_condition = "Bus_type NOT LIKE '%Sleeper%' AND Bus_type NOT LIKE '%Semi-Sleeper%'"
 
+            #Star rating condition
+            min_rating, max_rating = ratings
+
             query = f'''
                 SELECT * FROM bus_details 
                 WHERE Price BETWEEN {fare_min} AND {fare_max}
                 AND Route_name = "{KD}"
-                AND {bus_type_condition} AND Start_time>='{TIME}'
+                AND {bus_type_condition} 
+                AND Ratings BETWEEN {min_rating} AND {max_rating}
+                AND Start_time>='{TIME}'
                 ORDER BY Price and Start_time DESC
             '''
             my_cursor.execute(query)
@@ -282,14 +303,14 @@ if web == "States and Routes":
             ])
             return df
 
-        df_result = type_and_fare_KD(select_type, select_fare)
+        df_result = type_and_fare_KD(select_type, select_fare, select_star_rating)
         slt.dataframe(df_result)
 
     #Rajastan bus fare filtering
     if States=="Rajastan":
         RJ=slt.selectbox("list of routes",lists_RJ)
 
-        def type_and_fare_RJ(bus_type, fare_range):
+        def type_and_fare_RJ(bus_type, fare_range, ratings):
             conn = mysql.connector.connect(host="localhost", user="root", password="", database="RED_BUS_DETAILS")
             my_cursor = conn.cursor()
             # Define fare range based on selection
@@ -310,11 +331,16 @@ if web == "States and Routes":
             else:
                 bus_type_condition = "Bus_type NOT LIKE '%Sleeper%' AND Bus_type NOT LIKE '%Semi-Sleeper%'"
 
+            #Star rating condition
+            min_rating, max_rating = ratings
+
             query = f'''
                 SELECT * FROM bus_details 
                 WHERE Price BETWEEN {fare_min} AND {fare_max}
                 AND Route_name = "{RJ}"
-                AND {bus_type_condition} AND Start_time>='{TIME}'
+                AND {bus_type_condition} 
+                AND Ratings BETWEEN {min_rating} AND {max_rating}
+                AND Start_time>='{TIME}'
                 ORDER BY Price and Start_time DESC
             '''
             my_cursor.execute(query)
@@ -327,7 +353,7 @@ if web == "States and Routes":
             ])
             return df
 
-        df_result = type_and_fare_RJ(select_type, select_fare)
+        df_result = type_and_fare_RJ(select_type, select_fare, select_star_rating)
         slt.dataframe(df_result)
           
 
@@ -335,7 +361,7 @@ if web == "States and Routes":
     if States=="South Bengal":
         SB=slt.selectbox("list of rotes",lists_SB)
 
-        def type_and_fare_SB(bus_type, fare_range):
+        def type_and_fare_SB(bus_type, fare_range, ratings):
             conn = mysql.connector.connect(host="localhost", user="root", password="", database="RED_BUS_DETAILS")
             my_cursor = conn.cursor()
             # Define fare range based on selection
@@ -356,11 +382,16 @@ if web == "States and Routes":
             else:
                 bus_type_condition = "Bus_type NOT LIKE '%Sleeper%' AND Bus_type NOT LIKE '%Semi-Sleeper%'"
 
+            #Star rating condition
+            min_rating, max_rating = ratings
+
             query = f'''
                 SELECT * FROM bus_details 
                 WHERE Price BETWEEN {fare_min} AND {fare_max}
                 AND Route_name = "{SB}"
-                AND {bus_type_condition} AND Start_time>='{TIME}'
+                AND {bus_type_condition} 
+                AND Ratings BETWEEN {min_rating} AND {max_rating}
+                AND Start_time>='{TIME}'
                 ORDER BY Price and Start_time DESC
             '''
             my_cursor.execute(query)
@@ -373,14 +404,14 @@ if web == "States and Routes":
             ])
             return df
 
-        df_result = type_and_fare_SB(select_type, select_fare)
+        df_result = type_and_fare_SB(select_type, select_fare, select_star_rating)
         slt.dataframe(df_result)
     
     #Himachal bus fare filtering
     if States=="Himachal":
         H=slt.selectbox("list of rotes",lists_H)
 
-        def type_and_fare_H(bus_type, fare_range):
+        def type_and_fare_H(bus_type, fare_range, ratings):
             conn = mysql.connector.connect(host="localhost", user="root", password="", database="RED_BUS_DETAILS")
             my_cursor = conn.cursor()
             # Define fare range based on selection
@@ -401,11 +432,16 @@ if web == "States and Routes":
             else:
                 bus_type_condition = "Bus_type NOT LIKE '%Sleeper%' AND Bus_type NOT LIKE '%Semi-Sleeper%'"
 
+            #Star rating condition
+            min_rating, max_rating = ratings
+
             query = f'''
                 SELECT * FROM bus_details 
                 WHERE Price BETWEEN {fare_min} AND {fare_max}
                 AND Route_name = "{H}"
-                AND {bus_type_condition} AND Start_time>='{TIME}'
+                AND {bus_type_condition} 
+                AND Ratings BETWEEN {min_rating} AND {max_rating}
+                AND Start_time>='{TIME}'
                 ORDER BY Price and Start_time DESC
             '''
             my_cursor.execute(query)
@@ -418,7 +454,7 @@ if web == "States and Routes":
             ])
             return df
 
-        df_result = type_and_fare_H(select_type, select_fare)
+        df_result = type_and_fare_H(select_type, select_fare, select_star_rating)
         slt.dataframe(df_result)
 
 
@@ -426,7 +462,7 @@ if web == "States and Routes":
     if States=="Assam":
         AS=slt.selectbox("list of rotes",lists_AS)
 
-        def type_and_fare_AS(bus_type, fare_range):
+        def type_and_fare_AS(bus_type, fare_range, ratings):
             conn = mysql.connector.connect(host="localhost", user="root", password="", database="RED_BUS_DETAILS")
             my_cursor = conn.cursor()
             # Define fare range based on selection
@@ -447,11 +483,16 @@ if web == "States and Routes":
             else:
                 bus_type_condition = "Bus_type NOT LIKE '%Sleeper%' AND Bus_type NOT LIKE '%Semi-Sleeper%'"
 
+            #Star rating condition
+            min_rating, max_rating = ratings
+
             query = f'''
                 SELECT * FROM bus_details 
                 WHERE Price BETWEEN {fare_min} AND {fare_max}
                 AND Route_name = "{AS}"
-                AND {bus_type_condition} AND Start_time>='{TIME}'
+                AND {bus_type_condition} 
+                AND Ratings BETWEEN {min_rating} AND {max_rating}
+                AND Start_time>='{TIME}'
                 ORDER BY Price and Start_time DESC
             '''
             my_cursor.execute(query)
@@ -464,14 +505,14 @@ if web == "States and Routes":
             ])
             return df
 
-        df_result = type_and_fare_AS(select_type, select_fare)
+        df_result = type_and_fare_AS(select_type, select_fare, select_star_rating)
         slt.dataframe(df_result)
 
     #Utrra Pradesh bus fare filtering
     if States=="Uttar Pradesh":
         UP=slt.selectbox("list of rotes",lists_UP)
 
-        def type_and_fare_UP(bus_type, fare_range):
+        def type_and_fare_UP(bus_type, fare_range, ratings):
             conn = mysql.connector.connect(host="localhost", user="root", password="", database="RED_BUS_DETAILS")
             my_cursor = conn.cursor()
             # Define fare range based on selection
@@ -492,11 +533,16 @@ if web == "States and Routes":
             else:
                 bus_type_condition = "Bus_type NOT LIKE '%Sleeper%' AND Bus_type NOT LIKE '%Semi-Sleeper%'"
 
+            #Star rating condition
+            min_rating, max_rating = ratings
+
             query = f'''
                 SELECT * FROM bus_details 
                 WHERE Price BETWEEN {fare_min} AND {fare_max}
                 AND Route_name = "{UP}"
-                AND {bus_type_condition} AND Start_time>='{TIME}'
+                AND {bus_type_condition} 
+                AND Ratings BETWEEN {min_rating} AND {max_rating}
+                AND Start_time>='{TIME}'
                 ORDER BY Price and Start_time DESC
             '''
             my_cursor.execute(query)
@@ -509,14 +555,14 @@ if web == "States and Routes":
             ])
             return df
 
-        df_result = type_and_fare_UP(select_type, select_fare)
+        df_result = type_and_fare_UP(select_type, select_fare, select_star_rating)
         slt.dataframe(df_result)
 
     #West Bengal bus fare filtering
     if States=="West Bengal":
         WB=slt.selectbox("list of rotes",lists_WB)
 
-        def type_and_fare_WB(bus_type, fare_range):
+        def type_and_fare_WB(bus_type, fare_range, ratings):
             conn = mysql.connector.connect(host="localhost", user="root", password="", database="RED_BUS_DETAILS")
             my_cursor = conn.cursor()
             # Define fare range based on selection
@@ -536,12 +582,16 @@ if web == "States and Routes":
                 bus_type_condition = "Bus_type LIKE '%A/C Seater%'"
             else:
                 bus_type_condition = "Bus_type NOT LIKE '%Sleeper%' AND Bus_type NOT LIKE '%Semi-Sleeper%'"
+            #Star rating condition
+            min_rating, max_rating = ratings
 
             query = f'''
                 SELECT * FROM bus_details 
                 WHERE Price BETWEEN {fare_min} AND {fare_max}
                 AND Route_name = "{WB}"
-                AND {bus_type_condition} AND Start_time>='{TIME}'
+                AND {bus_type_condition} 
+                AND Ratings BETWEEN {min_rating} AND {max_rating}
+                AND Start_time>='{TIME}'
                 ORDER BY Price and Start_time  DESC
             '''
             my_cursor.execute(query)
@@ -554,5 +604,5 @@ if web == "States and Routes":
             ])
             return df
 
-        df_result = type_and_fare_WB(select_type, select_fare)
+        df_result = type_and_fare_WB(select_type, select_fare, select_star_rating)
         slt.dataframe(df_result)
